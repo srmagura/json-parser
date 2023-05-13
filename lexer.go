@@ -1,5 +1,7 @@
 package main
 
-func DoubleNumber(x int) int {
-	return 2 * x
+func Lex(input string) []string {
+	return []string{
+		"a", "b",
+	}
 }
