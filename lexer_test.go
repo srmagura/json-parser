@@ -41,7 +41,7 @@ func TestInteger(t *testing.T) {
 	assertTokensEqual(t, "1x3", []string{})
 }
 
-// func TestBoolean(t *testing.T) {
-// 	AssertTokensEqual(t, "false", []string{"false"})
-// 	AssertTokensEqual(t, "true", []string{"true"})
-// }
+func TestBoolean(t *testing.T) {
+	assertTokensEqual(t, "false", []string{"false"})
+	assertTokensEqual(t, "true", []string{"true"})
+}
