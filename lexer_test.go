@@ -18,7 +18,9 @@ func AreTokensEqual(expected []string, actual []string) bool {
 	return true
 }
 
-func AssertTokensEqual(t *testing.T, expected []string, actual []string) {
+func AssertTokensEqual(t *testing.T, json string, expected []string) {
+	actual := Lex(json)
+
 	if !AreTokensEqual(expected, actual) {
 		t.Error("Token arrays are not equal.")
 		t.Error()
@@ -30,10 +32,11 @@ func AssertTokensEqual(t *testing.T, expected []string, actual []string) {
 	}
 }
 
-func TestNumber(t *testing.T) {
-	expected := []string{
-		"a", "b",
-	}
-
-	AssertTokensEqual(t, expected, Lex(""))
+func TestInteger(t *testing.T) {
+	AssertTokensEqual(t, "1", []string{"1"})
 }
+
+// func TestBoolean(t *testing.T) {
+// 	AssertTokensEqual(t, "false", []string{"false"})
+// 	AssertTokensEqual(t, "true", []string{"true"})
+// }
