@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func AreTokensEqual(expected []string, actual []string) bool {
+func areTokensEqual(expected []string, actual []string) bool {
 	if len(expected) != len(actual) {
 		return false
 	}
@@ -18,10 +18,10 @@ func AreTokensEqual(expected []string, actual []string) bool {
 	return true
 }
 
-func AssertTokensEqual(t *testing.T, json string, expected []string) {
+func assertTokensEqual(t *testing.T, json string, expected []string) {
 	actual := Lex(json)
 
-	if !AreTokensEqual(expected, actual) {
+	if !areTokensEqual(expected, actual) {
 		t.Error("Token arrays are not equal.")
 		t.Error()
 		t.Error("Expected:")
@@ -29,11 +29,16 @@ func AssertTokensEqual(t *testing.T, json string, expected []string) {
 		t.Error()
 		t.Error("Actual:")
 		t.Error(actual)
+		t.FailNow()
 	}
 }
 
 func TestInteger(t *testing.T) {
-	AssertTokensEqual(t, "1", []string{"1"})
+	assertTokensEqual(t, "1", []string{"1"})
+	assertTokensEqual(t, "12", []string{"12"})
+	assertTokensEqual(t, "123", []string{"123"})
+
+	assertTokensEqual(t, "1x3", []string{})
 }
 
 // func TestBoolean(t *testing.T) {
