@@ -12,7 +12,7 @@ func assertFail(t *testing.T, json string) {
 	}
 }
 
-func areTokensEqual(expected []string, actual []string) bool {
+func areTokensEqual(expected []Token, actual []Token) bool {
 	if len(expected) != len(actual) {
 		return false
 	}
@@ -26,7 +26,7 @@ func areTokensEqual(expected []string, actual []string) bool {
 	return true
 }
 
-func assertTokensEqual(t *testing.T, json string, expected []string) {
+func assertTokensEqual(t *testing.T, json string, expected []Token) {
 	actual, ok := Lex(json)
 
 	if !ok {

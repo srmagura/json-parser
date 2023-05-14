@@ -72,8 +72,8 @@ func lexString(input string, i int) *Token {
 	return nil
 }
 
-func Lex(input string) (tokens []string, ok bool) {
-	tokens = []string{}
+func Lex(input string) (tokens []Token, ok bool) {
+	tokens = []Token{}
 	i := 0
 
 	check := func(token *Token) bool {
@@ -81,7 +81,7 @@ func Lex(input string) (tokens []string, ok bool) {
 			return false
 		}
 
-		tokens = append(tokens, token.Value)
+		tokens = append(tokens, *token)
 		i += len(token.Value)
 		return true
 	}
