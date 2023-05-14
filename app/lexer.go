@@ -13,10 +13,10 @@ func lexNumber(input string, i int) string {
 	token := ""
 
 	for j := i; j < len(input); j++ {
-		char := input[j : j+1]
+		charString := input[j : j+1]
 
-		if digitRegex.MatchString(char) {
-			token += char
+		if digitRegex.MatchString(charString) {
+			token += charString
 		} else {
 			return ""
 		}
@@ -37,12 +37,29 @@ func lexBoolean(input string, i int) string {
 	return ""
 }
 
+// Does not currently handle escaped quotes
+// Does not currently handle newlines
 func lexString(input string, i int) string {
+	j := i
+
+	if input[j] != '"' {
+		return ""
+	}
+
+	j++
+
+	for ; j < len(input); j++ {
+		if input[j] == '"' {
+			return input[i : j+1]
+		}
+	}
+
+	// We got to the end without finding a closing quote
 	return ""
 }
 
-func Lex(input string) []string {
-	tokens := []string{}
+func Lex(input string) (tokens []string, ok bool) {
+	tokens = []string{}
 	i := 0
 
 	check := func(token string) bool {
@@ -56,22 +73,20 @@ func Lex(input string) []string {
 	}
 
 	for i < len(input) {
-		var token string
-
-		token = lexNumber(input, i)
-
-		if check(token) {
+		if check(lexNumber(input, i)) {
 			continue
 		}
 
-		token = lexBoolean(input, i)
-
-		if check(token) {
+		if check(lexBoolean(input, i)) {
 			continue
 		}
 
-		break
+		if check(lexString(input, i)) {
+			continue
+		}
+
+		return tokens, false
 	}
 
-	return tokens
+	return tokens, true
 }
