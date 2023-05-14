@@ -37,25 +37,36 @@ func lexBoolean(input string, i int) string {
 	return ""
 }
 
+func lexString(input string, i int) string {
+	return ""
+}
+
 func Lex(input string) []string {
 	tokens := []string{}
 	i := 0
 
+	check := func(token string) bool {
+		if len(token) == 0 {
+			return false
+		}
+
+		tokens = append(tokens, token)
+		i += len(token)
+		return true
+	}
+
 	for i < len(input) {
 		var token string
+
 		token = lexNumber(input, i)
 
-		if len(token) != 0 {
-			tokens = append(tokens, token)
-			i += len(token)
+		if check(token) {
 			continue
 		}
 
 		token = lexBoolean(input, i)
 
-		if len(token) != 0 {
-			tokens = append(tokens, token)
-			i += len(token)
+		if check(token) {
 			continue
 		}
 

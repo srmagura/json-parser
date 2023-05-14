@@ -45,3 +45,7 @@ func TestBoolean(t *testing.T) {
 	assertTokensEqual(t, "false", []string{"false"})
 	assertTokensEqual(t, "true", []string{"true"})
 }
+
+func TestString(t *testing.T) {
+	assertTokensEqual(t, `"abc"`, []string{"abc"})
+}
