@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"json-to-yaml/app"
+)
 
 func main() {
+	fmt.Println(app.Lex("1"))
 	fmt.Printf("Hello")
 }
