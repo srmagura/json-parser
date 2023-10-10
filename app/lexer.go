@@ -8,12 +8,12 @@ import (
 type TokenType byte
 
 const (
-	Number TokenType = iota
-	Boolean
-	String
-	ArrayStart
-	ArrayEnd
-	Comma
+	TokenTypeNumber TokenType = iota
+	TokenTypeBoolean
+	TokenTypeString
+	TokenTypeArrayStart
+	TokenTypeArrayEnd
+	TokenTypeComma
 )
 
 type Token struct {
@@ -44,16 +44,16 @@ func lexNumber(input string, i int) *Token {
 		return nil
 	}
 
-	return &Token{Number, tokenValue}
+	return &Token{TokenTypeNumber, tokenValue}
 }
 
 func lexBoolean(input string, i int) *Token {
 	if i+5 <= len(input) && input[i:i+5] == "false" {
-		return &Token{Boolean, "false"}
+		return &Token{TokenTypeBoolean, "false"}
 	}
 
 	if i+4 <= len(input) && input[i:i+4] == "true" {
-		return &Token{Boolean, "true"}
+		return &Token{TokenTypeBoolean, "true"}
 	}
 
 	return nil
@@ -72,7 +72,7 @@ func lexString(input string, i int) *Token {
 
 	for ; j < len(input); j++ {
 		if input[j] == '"' {
-			return &Token{String, input[i : j+1]}
+			return &Token{TokenTypeString, input[i : j+1]}
 		}
 	}
 
@@ -82,15 +82,15 @@ func lexString(input string, i int) *Token {
 
 func lexDelimiter(input string, i int) *Token {
 	if input[i] == ',' {
-		return &Token{Comma, ","}
+		return &Token{TokenTypeComma, ","}
 	}
 
 	if input[i] == '[' {
-		return &Token{ArrayStart, "["}
+		return &Token{TokenTypeArrayStart, "["}
 	}
 
 	if input[i] == ']' {
-		return &Token{ArrayEnd, "]"}
+		return &Token{TokenTypeArrayEnd, "]"}
 	}
 
 	// TODO object start/end

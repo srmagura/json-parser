@@ -7,5 +7,4 @@ import (
 
 func main() {
 	fmt.Println(app.Lex("1"))
-	fmt.Printf("Hello")
 }
