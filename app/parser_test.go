@@ -5,10 +5,16 @@ import (
 )
 
 func assertParsingFails(t *testing.T, json string) {
-	_, ok := Lex(json)
+	tokens, lexOk := Lex(json)
 
-	if ok {
-		t.Fatal("Expected lexing to fail, but it succeeded.")
+	if !lexOk {
+		t.Fatal("Expected lexing to succeed, but it failed.")
+	}
+
+	_, parseOk := Parse(tokens)
+
+	if parseOk {
+		t.Fatal("Expected parsing to fail, but it succeeded.")
 	}
 }
 
@@ -41,4 +47,11 @@ func TestParseNumber(t *testing.T) {
 	var expected Node = NumberNode{12.3}
 
 	assertAstsEqual(t, "12.3", &expected)
+}
+
+func TestParseInvalidConsecutiveValues(t *testing.T) {
+	assertParsingFails(t, "12.3.2")
+	assertParsingFails(t, "12.3false")
+	assertParsingFails(t, "12.3 false")
+	assertParsingFails(t, `12."foo"`)
 }

@@ -18,28 +18,22 @@ func parseNumber(tokens []Token, i int) (node *Node, tokensConsumed int) {
 }
 
 func Parse(tokens []Token) (ast *Node, ok bool) {
-	var root *Node
-	i := 0
-
 	check := func(node *Node, tokensConsumed int) bool {
 		if node == nil {
 			return false
 		}
 
-		// TODO
-		root = node
+		if tokensConsumed != len(tokens) {
+			return false
+		}
 
-		i += tokensConsumed
+		ast = node
 		return true
 	}
 
-	for i < len(tokens) {
-		if check(parseNumber(tokens, i)) {
-			continue
-		}
-
-		return nil, false
+	if check(parseNumber(tokens, 0)) {
+		return ast, true
 	}
 
-	return root, true
+	return nil, false
 }
