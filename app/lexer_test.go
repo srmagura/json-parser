@@ -61,3 +61,13 @@ func TestBoolean(t *testing.T) {
 func TestString(t *testing.T) {
 	assertTokensEqual(t, `"abc"`, []Token{{String, `"abc"`}})
 }
+
+func TestArray(t *testing.T) {
+	assertTokensEqual(t, `[0, 1]`, []Token{
+		{ArrayStart, "["},
+		{Number, "0"},
+		{Comma, ","},
+		{Number, "1"},
+		{ArrayEnd, "]"},
+	})
+}

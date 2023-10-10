@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"regexp"
 )
 
@@ -10,6 +11,9 @@ const (
 	Number TokenType = iota
 	Boolean
 	String
+	ArrayStart
+	ArrayEnd
+	Comma
 )
 
 type Token struct {
@@ -23,20 +27,24 @@ type Token struct {
 var digitRegex = regexp.MustCompile("[0-9]")
 
 func lexNumber(input string, i int) *Token {
-	token := ""
+	tokenValue := ""
 
 	// This is going to need to be reworked to support floats
 	for j := i; j < len(input); j++ {
 		charString := input[j : j+1]
 
 		if digitRegex.MatchString(charString) {
-			token += charString
+			tokenValue += charString
 		} else {
-			return nil
+			break
 		}
 	}
 
-	return &Token{Number, token}
+	if len(tokenValue) == 0 {
+		return nil
+	}
+
+	return &Token{Number, tokenValue}
 }
 
 func lexBoolean(input string, i int) *Token {
@@ -72,6 +80,24 @@ func lexString(input string, i int) *Token {
 	return nil
 }
 
+func lexDelimiter(input string, i int) *Token {
+	if input[i] == ',' {
+		return &Token{Comma, ","}
+	}
+
+	if input[i] == '[' {
+		return &Token{ArrayStart, "["}
+	}
+
+	if input[i] == ']' {
+		return &Token{ArrayEnd, "]"}
+	}
+
+	// TODO object start/end
+
+	return nil
+}
+
 func Lex(input string) (tokens []Token, ok bool) {
 	tokens = []Token{}
 	i := 0
@@ -87,6 +113,14 @@ func Lex(input string) (tokens []Token, ok bool) {
 	}
 
 	for i < len(input) {
+		nextChar := input[i]
+
+		// Spaces and tabs are not considered tokens
+		if nextChar == ' ' || nextChar == '\t' {
+			i++
+			continue
+		}
+
 		if check(lexNumber(input, i)) {
 			continue
 		}
@@ -99,6 +133,11 @@ func Lex(input string) (tokens []Token, ok bool) {
 			continue
 		}
 
+		if check(lexDelimiter(input, i)) {
+			continue
+		}
+
+		fmt.Println("No check function matched.", i)
 		return tokens, false
 	}
 
