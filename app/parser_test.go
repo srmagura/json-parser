@@ -37,8 +37,8 @@ func assertAstsEqual(t *testing.T, json string, expected *Node) {
 	}
 }
 
-func TestNumber(t *testing.T) {
-	var expected Node = NumberNode{12}
+func TestParseNumber(t *testing.T) {
+	var expected Node = NumberNode{12.3}
 
-	assertAstsEqual(t, "12", &expected)
+	assertAstsEqual(t, "12.3", &expected)
 }

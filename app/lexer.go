@@ -27,12 +27,16 @@ var digitRegex = regexp.MustCompile("[0-9]")
 
 func lexNumber(input string, i int) *Token {
 	tokenValue := ""
+	hasConsumedDecimalPoint := false
 
 	// This is going to need to be reworked to support floats
 	for j := i; j < len(input); j++ {
 		charString := input[j : j+1]
 
 		if digitRegex.MatchString(charString) {
+			tokenValue += charString
+		} else if charString == "." && !hasConsumedDecimalPoint {
+			hasConsumedDecimalPoint = true
 			tokenValue += charString
 		} else {
 			break
