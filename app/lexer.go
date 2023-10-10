@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"regexp"
 )
 
@@ -137,8 +136,7 @@ func Lex(input string) (tokens []Token, ok bool) {
 			continue
 		}
 
-		fmt.Println("No check function matched.", i)
-		return tokens, false
+		return []Token{}, false
 	}
 
 	return tokens, true
