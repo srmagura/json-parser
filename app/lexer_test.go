@@ -46,18 +46,18 @@ func assertTokensEqual(t *testing.T, json string, expected []Token) {
 }
 
 func TestInteger(t *testing.T) {
-	assertTokensEqual(t, "1", []string{"1"})
-	assertTokensEqual(t, "12", []string{"12"})
-	assertTokensEqual(t, "123", []string{"123"})
+	assertTokensEqual(t, "1", []Token{{Number, "1"}})
+	assertTokensEqual(t, "12", []Token{{Number, "12"}})
+	assertTokensEqual(t, "123", []Token{{Number, "123"}})
 
 	assertFail(t, "1x3")
 }
 
 func TestBoolean(t *testing.T) {
-	assertTokensEqual(t, "false", []string{"false"})
-	assertTokensEqual(t, "true", []string{"true"})
+	assertTokensEqual(t, "false", []Token{{Boolean, "false"}})
+	assertTokensEqual(t, "true", []Token{{Boolean, "true"}})
 }
 
 func TestString(t *testing.T) {
-	assertTokensEqual(t, `"abc"`, []string{`"abc"`})
+	assertTokensEqual(t, `"abc"`, []Token{{String, `"abc"`}})
 }
