@@ -1,3 +1,3 @@
-module json-to-yaml
+module json-parser
 
 go 1.21
