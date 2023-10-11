@@ -63,6 +63,14 @@ func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
 			return &nodeToReturn, j - i + 1
 		}
 
+		if j != i+1 {
+			if tokens[j].Type == TokenTypeComma {
+				j++
+			} else {
+				return
+			}
+		}
+
 		elementNode, elementTokensConsumed := parseCore(tokens, j)
 
 		if elementNode == nil || elementTokensConsumed == 0 {
@@ -71,6 +79,7 @@ func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
 
 		arrayNode.Elements = append(arrayNode.Elements, *elementNode)
 		j += elementTokensConsumed
+
 	}
 
 	return

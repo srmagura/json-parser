@@ -82,15 +82,15 @@ func TestParseArray(t *testing.T) {
 	var expected Node = ArrayNode{[]Node{}}
 	assertAstsEqual(t, `[]`, &expected)
 
-	// expected = ArrayNode{[]Node{
-	// 	&NumberNode{7},
-	// }}
-	// assertAstsEqual(t, `[7]`, &expected)
+	expected = ArrayNode{[]Node{
+		&NumberNode{7},
+	}}
+	assertAstsEqual(t, `[7]`, &expected)
 
-	// expected = ArrayNode{[]Node{
-	// 	BooleanNode{false},
-	// 	NumberNode{2},
-	// 	StringNode{"foo"},
-	// }}
-	// assertAstsEqual(t, `[false, 2, "foo"]`, &expected)
+	expected = ArrayNode{[]Node{
+		BooleanNode{false},
+		NumberNode{2},
+		StringNode{"foo"},
+	}}
+	assertAstsEqual(t, `[false, 2, "foo"]`, &expected)
 }
