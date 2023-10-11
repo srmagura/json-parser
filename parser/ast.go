@@ -21,9 +21,9 @@ type StringNode struct {
 	Value string
 }
 
-// type ArrayNode struct {
-// 	Elements []Node
-// }
+type ArrayNode struct {
+	Elements []Node
+}
 
 func (n NumberNode) GetNodeType() NodeType {
 	return NodeTypeNumber
@@ -35,6 +35,10 @@ func (n BooleanNode) GetNodeType() NodeType {
 
 func (n StringNode) GetNodeType() NodeType {
 	return NodeTypeString
+}
+
+func (n ArrayNode) GetNodeType() NodeType {
+	return NodeTypeArray
 }
 
 type Node interface {

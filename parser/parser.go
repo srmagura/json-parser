@@ -1,6 +1,8 @@
 package parser
 
-import "strconv"
+import (
+	"strconv"
+)
 
 func parseNumber(tokens []Token, i int) (node *Node, tokensConsumed int) {
 	if tokens[i].Type == TokenTypeNumber {
@@ -13,7 +15,7 @@ func parseNumber(tokens []Token, i int) (node *Node, tokensConsumed int) {
 		}
 	}
 
-	return nil, 0
+	return
 }
 
 func parseBoolean(tokens []Token, i int) (node *Node, tokensConsumed int) {
@@ -31,49 +33,86 @@ func parseBoolean(tokens []Token, i int) (node *Node, tokensConsumed int) {
 		}
 	}
 
-	return nil, 0
+	return
 }
 
 func parseString(tokens []Token, i int) (node *Node, tokensConsumed int) {
-	if tokens[i].Type == TokenTypeBoolean {
-		if tokens[i].Value == "true" {
-			var node Node = BooleanNode{true}
+	if tokens[i].Type == TokenTypeString {
+		value := tokens[i].Value
 
-			return &node, 1
-		}
+		// Remove the leading and trailing quotes
+		var node Node = StringNode{value[1 : len(value)-1]}
 
-		if tokens[i].Value == "false" {
-			var node Node = BooleanNode{false}
-
-			return &node, 1
-		}
+		return &node, 1
 	}
 
-	return nil, 0
+	return
 }
 
-// TODO this needs to be recursive
-func Parse(tokens []Token) (ast *Node, ok bool) {
-	check := func(node *Node, tokensConsumed int) bool {
-		if node == nil {
+func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
+	if tokens[i].Type != TokenTypeArrayStart {
+		return
+	}
+
+	arrayNode := ArrayNode{[]Node{}}
+
+	for j := i + 1; j < len(tokens); {
+		if tokens[j].Type == TokenTypeArrayEnd {
+			var nodeToReturn Node = arrayNode
+
+			return &nodeToReturn, j - i + 1
+		}
+
+		elementNode, elementTokensConsumed := parseCore(tokens, j)
+
+		if elementNode == nil || elementTokensConsumed == 0 {
+			return
+		}
+
+		arrayNode.Elements = append(arrayNode.Elements, *elementNode)
+		j += elementTokensConsumed
+	}
+
+	return
+}
+
+func parseCore(tokens []Token, i int) (node *Node, tokensConsumed int) {
+	check := func(_node *Node, _tokensConsumed int) bool {
+		if _node == nil || _tokensConsumed == 0 {
 			return false
 		}
 
-		if tokensConsumed != len(tokens) {
-			return false
-		}
+		node = _node
+		tokensConsumed = _tokensConsumed
 
-		ast = node
 		return true
 	}
 
-	if check(parseNumber(tokens, 0)) {
+	if check(parseNumber(tokens, i)) {
+		return
+	}
+
+	if check(parseBoolean(tokens, i)) {
+		return
+	}
+
+	if check(parseString(tokens, i)) {
+		return
+	}
+
+	if check(parseArray(tokens, i)) {
+		return
+	}
+
+	return
+}
+
+func Parse(tokens []Token) (ast *Node, ok bool) {
+	ast, tokensConsumed := parseCore(tokens, 0)
+
+	if ast != nil && tokensConsumed == len(tokens) {
 		return ast, true
 	}
 
-	if check(parseBoolean(tokens, 0)) {
-		return ast, true
-	}
-
-	return nil, false
+	return
 }
