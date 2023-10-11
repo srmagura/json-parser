@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"testing"
 )
 
@@ -19,8 +20,17 @@ func assertParsingFails(t *testing.T, json string) {
 }
 
 func areAstsEqual(expected *Node, actual *Node) bool {
-	// TODO
-	return true
+	expectedJsonBytes, e1 := json.Marshal(expected)
+	actualJsonBytes, e2 := json.Marshal(actual)
+
+	if e1 != nil || e2 != nil {
+		return false
+	}
+
+	expectedJson := string(expectedJsonBytes)
+	actualJson := string(actualJsonBytes)
+
+	return expectedJson == actualJson
 }
 
 func assertAstsEqual(t *testing.T, json string, expected *Node) {
