@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"json-to-yaml/app"
+	"json-to-yaml/parser"
 )
 
 func main() {
-	fmt.Println(app.Lex("1"))
+	fmt.Println(parser.Lex("1"))
 }

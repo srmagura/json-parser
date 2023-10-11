@@ -1,4 +1,4 @@
-package app
+package parser
 
 import (
 	"testing"
@@ -45,7 +45,6 @@ func assertAstsEqual(t *testing.T, json string, expected *Node) {
 
 func TestParseNumber(t *testing.T) {
 	var expected Node = NumberNode{12.3}
-
 	assertAstsEqual(t, "12.3", &expected)
 }
 
@@ -54,4 +53,17 @@ func TestParseInvalidConsecutiveValues(t *testing.T) {
 	assertParsingFails(t, "12.3false")
 	assertParsingFails(t, "12.3 false")
 	assertParsingFails(t, `12."foo"`)
+}
+
+func TestParseBoolean(t *testing.T) {
+	var expected Node = BooleanNode{true}
+	assertAstsEqual(t, "true", &expected)
+
+	expected = BooleanNode{false}
+	assertAstsEqual(t, "false", &expected)
+}
+
+func TestParseString(t *testing.T) {
+	var expected Node = StringNode{"foo bar"}
+	assertAstsEqual(t, `"foo bar"`, &expected)
 }

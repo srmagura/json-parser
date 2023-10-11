@@ -1,4 +1,4 @@
-package app
+package parser
 
 import (
 	"regexp"
@@ -20,7 +20,7 @@ type Token struct {
 	Value string
 }
 
-// The individual lex functions return an empty string if they failed to read a
+// The individual lex functions return a nil pointer if they failed to read a
 // token.
 
 var digitRegex = regexp.MustCompile("[0-9]")
@@ -29,7 +29,6 @@ func lexNumber(input string, i int) *Token {
 	tokenValue := ""
 	hasConsumedDecimalPoint := false
 
-	// This is going to need to be reworked to support floats
 	for j := i; j < len(input); j++ {
 		charString := input[j : j+1]
 
