@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"encoding/json"
 	"testing"
 )
 
@@ -19,18 +18,37 @@ func assertParsingFails(t *testing.T, json string) {
 	}
 }
 
-func areAstsEqual(expected *Node, actual *Node) bool {
-	expectedJsonBytes, e1 := json.Marshal(expected)
-	actualJsonBytes, e2 := json.Marshal(actual)
-
-	if e1 != nil || e2 != nil {
+func areAstsEqual(t *testing.T, expected *Node, actual *Node) bool {
+	if (*expected).GetNodeType() != (*actual).GetNodeType() {
 		return false
 	}
 
-	expectedJson := string(expectedJsonBytes)
-	actualJson := string(actualJsonBytes)
+	switch nodeType := (*expected).GetNodeType(); nodeType {
+	case NodeTypeNumber:
+		return (*expected).(NumberNode).Value == (*actual).(NumberNode).Value
+	case NodeTypeBoolean:
+		return (*expected).(BooleanNode).Value == (*actual).(BooleanNode).Value
+	case NodeTypeString:
+		return (*expected).(StringNode).Value == (*actual).(StringNode).Value
+	case NodeTypeArray:
+		expectedElements := (*expected).(ArrayNode).Elements
+		actualElements := (*actual).(ArrayNode).Elements
 
-	return expectedJson == actualJson
+		if len(expectedElements) != len(actualElements) {
+			return false
+		}
+
+		for i := 0; i < len(expectedElements); i++ {
+			if !areAstsEqual(t, &(expectedElements[i]), &(actualElements[i])) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	t.Fatal("areAstsEqual: none of the switch cases matched.")
+	return false
 }
 
 func assertAstsEqual(t *testing.T, json string, expected *Node) {
@@ -46,7 +64,7 @@ func assertAstsEqual(t *testing.T, json string, expected *Node) {
 		t.Fatal("Parsing failed.")
 	}
 
-	if !areAstsEqual(expected, actual) {
+	if !areAstsEqual(t, expected, actual) {
 		// If this happens, use the debugger to see how `expected` and `actual`
 		// differ
 		t.Fatal("ASTs are not equal.")
@@ -83,7 +101,7 @@ func TestParseArray(t *testing.T) {
 	assertAstsEqual(t, `[]`, &expected)
 
 	expected = ArrayNode{[]Node{
-		&NumberNode{7},
+		NumberNode{7},
 	}}
 	assertAstsEqual(t, `[7]`, &expected)
 
