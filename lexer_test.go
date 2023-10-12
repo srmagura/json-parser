@@ -72,10 +72,24 @@ func TestLexString(t *testing.T) {
 
 func TestLexArray(t *testing.T) {
 	assertTokensEqual(t, `[0, 1]`, []Token{
-		{TokenTypeArrayStart, "["},
+		{TokenTypeOpenSquareBracket, "["},
 		{TokenTypeNumber, "0"},
 		{TokenTypeComma, ","},
 		{TokenTypeNumber, "1"},
-		{TokenTypeArrayEnd, "]"},
+		{TokenTypeCloseSquareBracket, "]"},
+	})
+}
+
+func TestLexObject(t *testing.T) {
+	assertTokensEqual(t, `{"a": 0, "b": false}`, []Token{
+		{TokenTypeOpenCurlyBrace, "{"},
+		{TokenTypeString, `"a"`},
+		{TokenTypeColon, ":"},
+		{TokenTypeNumber, "0"},
+		{TokenTypeComma, ","},
+		{TokenTypeString, `"b"`},
+		{TokenTypeColon, ":"},
+		{TokenTypeBoolean, "false"},
+		{TokenTypeCloseCurlyBrace, "}"},
 	})
 }

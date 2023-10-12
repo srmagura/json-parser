@@ -10,9 +10,12 @@ const (
 	TokenTypeNumber TokenType = iota
 	TokenTypeBoolean
 	TokenTypeString
-	TokenTypeArrayStart
-	TokenTypeArrayEnd
+	TokenTypeOpenSquareBracket
+	TokenTypeCloseSquareBracket
+	TokenTypeOpenCurlyBrace
+	TokenTypeCloseCurlyBrace
 	TokenTypeComma
+	TokenTypeColon
 )
 
 type Token struct {
@@ -83,19 +86,29 @@ func lexString(input string, i int) *Token {
 }
 
 func lexDelimiter(input string, i int) *Token {
+	if input[i] == '[' {
+		return &Token{TokenTypeOpenSquareBracket, "["}
+	}
+
+	if input[i] == ']' {
+		return &Token{TokenTypeCloseSquareBracket, "]"}
+	}
+
+	if input[i] == '{' {
+		return &Token{TokenTypeOpenCurlyBrace, "{"}
+	}
+
+	if input[i] == '}' {
+		return &Token{TokenTypeCloseCurlyBrace, "}"}
+	}
+
 	if input[i] == ',' {
 		return &Token{TokenTypeComma, ","}
 	}
 
-	if input[i] == '[' {
-		return &Token{TokenTypeArrayStart, "["}
+	if input[i] == ':' {
+		return &Token{TokenTypeColon, ":"}
 	}
-
-	if input[i] == ']' {
-		return &Token{TokenTypeArrayEnd, "]"}
-	}
-
-	// TODO object start/end
 
 	return nil
 }

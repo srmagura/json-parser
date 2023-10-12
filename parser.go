@@ -50,14 +50,14 @@ func parseString(tokens []Token, i int) (node *Node, tokensConsumed int) {
 }
 
 func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
-	if tokens[i].Type != TokenTypeArrayStart {
+	if tokens[i].Type != TokenTypeOpenSquareBracket {
 		return
 	}
 
 	arrayNode := ArrayNode{[]Node{}}
 
 	for j := i + 1; j < len(tokens); {
-		if tokens[j].Type == TokenTypeArrayEnd {
+		if tokens[j].Type == TokenTypeCloseSquareBracket {
 			var nodeToReturn Node = arrayNode
 
 			return &nodeToReturn, j - i + 1
