@@ -39,7 +39,33 @@ func areAstsEqual(t *testing.T, expected *Node, actual *Node) bool {
 		}
 
 		for i := 0; i < len(expectedElements); i++ {
-			if !areAstsEqual(t, &(expectedElements[i]), &(actualElements[i])) {
+			if !areAstsEqual(t, expectedElements[i], actualElements[i]) {
+				return false
+			}
+		}
+
+		return true
+
+	case NodeTypeProperty:
+		expectedProperty := (*expected).(PropertyNode)
+		actualProperty := (*actual).(PropertyNode)
+
+		return expectedProperty.Key != actualProperty.Key &&
+			areAstsEqual(t, expectedProperty.Value, actualProperty.Value)
+
+	case NodeTypeObject:
+		expectedProperties := (*expected).(ObjectNode).Properties
+		actualProperties := (*actual).(ObjectNode).Properties
+
+		if len(expectedProperties) != len(actualProperties) {
+			return false
+		}
+
+		for i := 0; i < len(expectedProperties); i++ {
+			var expectedProperty Node = *expectedProperties[i]
+			var actualProperty Node = *actualProperties[i]
+
+			if !areAstsEqual(t, &expectedProperty, &actualProperty) {
 				return false
 			}
 		}
@@ -97,18 +123,27 @@ func TestParseString(t *testing.T) {
 }
 
 func TestParseArray(t *testing.T) {
-	var expected Node = ArrayNode{[]Node{}}
+	var expected Node = ArrayNode{[]*Node{}}
 	assertAstsEqual(t, `[]`, &expected)
 
-	expected = ArrayNode{[]Node{
-		NumberNode{7},
+	var el0 Node = NumberNode{7}
+
+	expected = ArrayNode{[]*Node{
+		&el0,
 	}}
 	assertAstsEqual(t, `[7]`, &expected)
 
-	expected = ArrayNode{[]Node{
-		BooleanNode{false},
-		NumberNode{2},
-		StringNode{"foo"},
+	el0 = BooleanNode{false}
+	var el1 Node = NumberNode{2}
+	var el2 Node = StringNode{"foo"}
+
+	expected = ArrayNode{[]*Node{
+		&el0, &el1, &el2,
 	}}
 	assertAstsEqual(t, `[false, 2, "foo"]`, &expected)
+}
+
+func TestParseObject(t *testing.T) {
+	var expected Node = ObjectNode{[]*PropertyNode{}}
+	assertAstsEqual(t, `{}`, &expected)
 }

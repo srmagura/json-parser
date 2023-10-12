@@ -54,7 +54,7 @@ func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
 		return
 	}
 
-	arrayNode := ArrayNode{[]Node{}}
+	arrayNode := ArrayNode{[]*Node{}}
 
 	for j := i + 1; j < len(tokens); {
 		if tokens[j].Type == TokenTypeCloseSquareBracket {
@@ -77,8 +77,44 @@ func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
 			return
 		}
 
-		arrayNode.Elements = append(arrayNode.Elements, *elementNode)
+		arrayNode.Elements = append(arrayNode.Elements, elementNode)
 		j += elementTokensConsumed
+
+	}
+
+	return
+}
+
+func parseObject(tokens []Token, i int) (node *Node, tokensConsumed int) {
+	if tokens[i].Type != TokenTypeOpenCurlyBrace {
+		return
+	}
+
+	objectNode := ObjectNode{[]*PropertyNode{}}
+
+	for j := i + 1; j < len(tokens); {
+		if tokens[j].Type == TokenTypeCloseCurlyBrace {
+			var nodeToReturn Node = objectNode
+
+			return &nodeToReturn, j - i + 1
+		}
+
+		// if j != i+1 {
+		// 	if tokens[j].Type == TokenTypeComma {
+		// 		j++
+		// 	} else {
+		// 		return
+		// 	}
+		// }
+
+		// elementNode, elementTokensConsumed := parseCore(tokens, j)
+
+		// if elementNode == nil || elementTokensConsumed == 0 {
+		// 	return
+		// }
+
+		// objectNode.Elements = append(objectNode.Elements, elementNode)
+		// j += elementTokensConsumed
 
 	}
 
@@ -110,6 +146,10 @@ func parseCore(tokens []Token, i int) (node *Node, tokensConsumed int) {
 	}
 
 	if check(parseArray(tokens, i)) {
+		return
+	}
+
+	if check(parseObject(tokens, i)) {
 		return
 	}
 

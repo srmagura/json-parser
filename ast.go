@@ -7,6 +7,8 @@ const (
 	NodeTypeBoolean
 	NodeTypeString
 	NodeTypeArray
+	NodeTypeProperty
+	NodeTypeObject
 )
 
 type NumberNode struct {
@@ -22,7 +24,16 @@ type StringNode struct {
 }
 
 type ArrayNode struct {
-	Elements []Node
+	Elements []*Node
+}
+
+type PropertyNode struct {
+	Key   string
+	Value *Node
+}
+
+type ObjectNode struct {
+	Properties []*PropertyNode
 }
 
 func (n NumberNode) GetNodeType() NodeType {
@@ -39,6 +50,14 @@ func (n StringNode) GetNodeType() NodeType {
 
 func (n ArrayNode) GetNodeType() NodeType {
 	return NodeTypeArray
+}
+
+func (n PropertyNode) GetNodeType() NodeType {
+	return NodeTypeProperty
+}
+
+func (n ObjectNode) GetNodeType() NodeType {
+	return NodeTypeObject
 }
 
 type Node interface {
