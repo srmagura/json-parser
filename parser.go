@@ -71,7 +71,7 @@ func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
 			}
 		}
 
-		elementNode, elementTokensConsumed := parseCore(tokens, j)
+		elementNode, elementTokensConsumed := parseAny(tokens, j)
 
 		if elementNode == nil || elementTokensConsumed == 0 {
 			return
@@ -83,6 +83,32 @@ func parseArray(tokens []Token, i int) (node *Node, tokensConsumed int) {
 	}
 
 	return
+}
+
+// Properties are only allowed to be direct children of objects
+func parseProperty(tokens []Token, i int) (node *PropertyNode, tokensConsumed int) {
+	j := i
+
+	keyNode, keyTokensConsumed := parseString(tokens, j)
+
+	if keyNode == nil || keyTokensConsumed == 0 {
+		return
+	}
+
+	key := (*keyNode).(StringNode).Value
+	j += keyTokensConsumed
+
+	if j >= len(tokens) || tokens[j].Type != TokenTypeColon {
+		return
+	}
+
+	j++
+
+	valueNode, valueTokensConsumed := parseAny(tokens, j)
+
+	j += valueTokensConsumed
+
+	return &PropertyNode{key, valueNode}, j - i
 }
 
 func parseObject(tokens []Token, i int) (node *Node, tokensConsumed int) {
@@ -99,29 +125,28 @@ func parseObject(tokens []Token, i int) (node *Node, tokensConsumed int) {
 			return &nodeToReturn, j - i + 1
 		}
 
-		// if j != i+1 {
-		// 	if tokens[j].Type == TokenTypeComma {
-		// 		j++
-		// 	} else {
-		// 		return
-		// 	}
-		// }
+		if j != i+1 {
+			if tokens[j].Type == TokenTypeComma {
+				j++
+			} else {
+				return
+			}
+		}
 
-		// elementNode, elementTokensConsumed := parseCore(tokens, j)
+		propertyNode, propertyTokensConsumed := parseProperty(tokens, j)
 
-		// if elementNode == nil || elementTokensConsumed == 0 {
-		// 	return
-		// }
+		if propertyNode == nil || propertyTokensConsumed == 0 {
+			return
+		}
 
-		// objectNode.Elements = append(objectNode.Elements, elementNode)
-		// j += elementTokensConsumed
-
+		objectNode.Properties = append(objectNode.Properties, propertyNode)
+		j += propertyTokensConsumed
 	}
 
 	return
 }
 
-func parseCore(tokens []Token, i int) (node *Node, tokensConsumed int) {
+func parseAny(tokens []Token, i int) (node *Node, tokensConsumed int) {
 	check := func(_node *Node, _tokensConsumed int) bool {
 		if _node == nil || _tokensConsumed == 0 {
 			return false
@@ -157,7 +182,7 @@ func parseCore(tokens []Token, i int) (node *Node, tokensConsumed int) {
 }
 
 func Parse(tokens []Token) (ast *Node, ok bool) {
-	ast, tokensConsumed := parseCore(tokens, 0)
+	ast, tokensConsumed := parseAny(tokens, 0)
 
 	if ast != nil && tokensConsumed == len(tokens) {
 		return ast, true

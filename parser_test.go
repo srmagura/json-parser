@@ -50,7 +50,7 @@ func areAstsEqual(t *testing.T, expected *Node, actual *Node) bool {
 		expectedProperty := (*expected).(PropertyNode)
 		actualProperty := (*actual).(PropertyNode)
 
-		return expectedProperty.Key != actualProperty.Key &&
+		return expectedProperty.Key == actualProperty.Key &&
 			areAstsEqual(t, expectedProperty.Value, actualProperty.Value)
 
 	case NodeTypeObject:
@@ -146,4 +146,39 @@ func TestParseArray(t *testing.T) {
 func TestParseObject(t *testing.T) {
 	var expected Node = ObjectNode{[]*PropertyNode{}}
 	assertAstsEqual(t, `{}`, &expected)
+
+	var value0 Node = NumberNode{0}
+
+	expected = ObjectNode{[]*PropertyNode{
+		{"a", &value0},
+	}}
+	assertAstsEqual(t, `{ "a": 0 }`, &expected)
+
+	var element0 Node = StringNode{"foo"}
+	var value1 Node = ArrayNode{[]*Node{&element0}}
+
+	expected = ObjectNode{[]*PropertyNode{
+		{"a", &value0},
+		{"b", &value1},
+	}}
+	assertAstsEqual(t, `{ "a": 0, "b": ["foo"] }`, &expected)
+}
+
+func TestParseNested(t *testing.T) {
+	json := `{ "array0": [{ "array1": [13]}] }`
+
+	var number13 Node = NumberNode{13}
+	var array1 Node = ArrayNode{[]*Node{
+		&number13,
+	}}
+	var object1 Node = ObjectNode{[]*PropertyNode{
+		{"array1", &array1},
+	}}
+
+	var array0 Node = ArrayNode{[]*Node{&object1}}
+	var expected Node = ObjectNode{[]*PropertyNode{
+		{"array0", &array0},
+	}}
+
+	assertAstsEqual(t, json, &expected)
 }
